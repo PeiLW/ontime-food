@@ -151,6 +151,14 @@ body{font-family:'Jost',sans-serif;font-weight:300;background:var(--cream2);colo
 </style>
 </head>
 <body>
+<!-- Loading screen -->
+<div id="loadingScreen" style="position:fixed;inset:0;background:var(--cream);z-index:999;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;">
+  <div style="font-family:'Cormorant Garamond',serif;font-size:24px;font-weight:500;color:var(--brown3);">準食</div>
+  <div style="font-size:9px;letter-spacing:0.2em;color:var(--muted);text-transform:uppercase;margin-top:-8px;">on-time food</div>
+  <div style="width:32px;height:32px;border:2px solid var(--cream3);border-top-color:var(--brown3);border-radius:50%;animation:spin 0.8s linear infinite;margin-top:8px;"></div>
+</div>
+<style>@keyframes spin{to{transform:rotate(360deg);}}</style>
+
 <div id="root">
   <div class="hdr">
     <div class="logo" onclick="goHome()">
@@ -204,9 +212,11 @@ body{font-family:'Jost',sans-serif;font-weight:300;background:var(--cream2);colo
 </div>
 
 <script>
+var APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycby8OR1HMrdynSqtOSvOlIEvYqkvbHZqxKtysDl78Goqx0sf1YTHFh4oGTcMpaJTZ1vW7w/exec'; // ← 換成你的 Apps Script URL
+
 var lang='zh',step='cart',dlvMode='pickup',selDay='',selStation='',drawerOpen=false;
 var discountCode='',discountPct=0;
-var VALID_CODES={'WELCOME10':10,'KIMVA15':15};
+var VALID_CODES = {}; // loaded from Google Sheet
 var STEP_ORDER=['cart','contact','payment','done'];
 var LABELS={zh:['訂單','聯絡','匯款','完成'],en:['Cart','Details','Payment','Done']};
 var ALL_STATIONS=[
@@ -222,13 +232,8 @@ var T={
   zh:{cart:'購物車',goCart:'前往購物車',langBtn:'EN',btag:'本週上架 · WEEK 12',btitle:'精選食材，新鮮直送',bdate:'2025 年 3 月 18 日',bdeadline:'週二 23:59 截單',tabFrozen:'❄ 冷凍食品',tabFresh:'🌿 現做食品',sl1:'冷凍 · 隨時可下單',sl2:'現做 · 本週六自取',soldout:'暫時售完',orderDetail:'訂單明細',delivery:'交貨方式',pickup:'自取',deliver:'宅配',pickupDayLabel:'選擇取貨日期',pickupStationLabel:'選擇取貨站',deliverNote:'DPD 平日晚上出貨',deliverFee:'+ £10',free:'免費',freshOnlyNote:'⚠ 含現做品項，取貨限週六',contact:'聯絡資訊',name:'姓名',phone:'聯絡電話',email:'Email',wa:'WhatsApp',addr:'收件地址',addrPh:'Street, City, Postcode',bankTitle:'匯款資訊',bankNote:'請匯款至以下帳戶',acc5:'匯款帳號末四碼',acc5ph:'填寫末四碼方便我們對帳',note1:'請完成匯款後填寫末四碼，我們確認後將以 WhatsApp 或 Email 通知您。',confirmPayment:'已完成匯款 →',back:'← 返回',next:'填寫聯絡資訊 →',toPayment:'前往匯款 →',doneTitle:'感謝您的訂購！',doneSub:'我們已收到您的訂單\n確認匯款後將透過 WhatsApp 或 Email 通知您',subtotal:'小計',shipping:'運費',total:'總計',orderSummary:'訂單摘要',discountLabel:'折扣碼',discountApply:'套用',discountPh:'輸入折扣碼',discountOk:'✓ 折扣碼已套用！節省 ',discountFail:'✗ 無效的折扣碼',waContact:'WhatsApp 聯繫我們',backHome:'回到主頁',acctName:'帳戶名稱',acctNo:'帳號',amtDue:'應付金額',emptyCart:'購物車是空的',continueShopping:'← 繼續選購',errReq:'此欄位為必填',errPhone:'請輸入有效的電話號碼',errEmail:'請輸入有效的 Email',collDay:'取貨日期',collPoint:'取貨站',collTime:'時間',drawerTitle:'購物車'},
   en:{cart:'Cart',goCart:'Go to Cart',langBtn:'中',btag:'This Week · Week 12',btitle:'Fresh & Honest Food',bdate:'18 March 2025',bdeadline:'Order by Tue 23:59',tabFrozen:'❄ Frozen',tabFresh:'🌿 Freshly Made',sl1:'Frozen · Order anytime',sl2:'Freshly made · This Saturday',soldout:'Sold Out',orderDetail:'Order Summary',delivery:'Delivery',pickup:'Collection',deliver:'Delivery',pickupDayLabel:'Choose collection day',pickupStationLabel:'Choose collection point',deliverNote:'DPD weekday evenings',deliverFee:'+ £10',free:'Free',freshOnlyNote:'⚠ Fresh items — Saturday only',contact:'Contact Details',name:'Full Name',phone:'Phone',email:'Email',wa:'WhatsApp',addr:'Delivery Address',addrPh:'Street, City, Postcode',bankTitle:'Payment',bankNote:'Please transfer to the account below',acc5:'Last 4 digits of account',acc5ph:'Helps us match your payment',note1:"Transfer the amount, then enter the last 4 digits. We'll confirm via WhatsApp or Email.",confirmPayment:'I have transferred →',back:'← Back',next:'Continue →',toPayment:'Go to Payment →',doneTitle:'Order Received!',doneSub:"We've got your order.\nWe'll confirm via WhatsApp or Email once payment is received.",subtotal:'Subtotal',shipping:'Shipping',total:'Total',orderSummary:'Order Summary',discountLabel:'Discount Code',discountApply:'Apply',discountPh:'Enter discount code',discountOk:'✓ Discount applied! Saving ',discountFail:'✗ Invalid discount code',waContact:'Contact us on WhatsApp',backHome:'Back to Home',acctName:'Account Name',acctNo:'Account No.',amtDue:'Amount Due',emptyCart:'Your cart is empty',continueShopping:'← Continue Shopping',errReq:'This field is required',errPhone:'Please enter a valid phone number',errEmail:'Please enter a valid email',collDay:'Collection Day',collPoint:'Collection Point',collTime:'Time',drawerTitle:'Cart'}
 };
-var products=[
-  {id:1,cat:'frozen',name:{zh:'手工煎餃（豬肉高麗菜）',en:'Pan-fried Dumplings'},desc:{zh:'每包 10 粒，冷凍保存',en:'10 pcs per pack, frozen'},price:8.5,unit:{zh:'包',en:'pack'},stock:true,emoji:'🥟'},
-  {id:2,cat:'frozen',name:{zh:'紅燒牛肉麵湯底',en:'Braised Beef Noodle Broth'},desc:{zh:'2人份，加麵即可上桌',en:'Serves 2, just add noodles'},price:12,unit:{zh:'份',en:'portion'},stock:true,emoji:'🍲'},
-  {id:3,cat:'frozen',name:{zh:'麻辣湯底',en:'Spicy Broth Base'},desc:{zh:'濃醇香辣，1人份',en:'Rich & spicy, serves 1'},price:7,unit:{zh:'份',en:'portion'},stock:false,emoji:'🌶️'},
-  {id:4,cat:'fresh',name:{zh:'手工蔥油餅（現做）',en:'Scallion Pancake'},desc:{zh:'週六現做，外脆內軟',en:'Made Saturday, crispy outside'},price:5,unit:{zh:'片',en:'piece'},stock:true,emoji:'🫓'},
-  {id:5,cat:'fresh',name:{zh:'台式滷肉飯套餐',en:'Braised Pork Rice Set'},desc:{zh:'滷肉飯＋滷蛋＋小菜',en:'Braised pork rice + egg + side'},price:9.5,unit:{zh:'份',en:'set'},stock:true,emoji:'🍱'}
-];
+var products = []; // loaded from Google Sheet
+var productsLoaded = false;
 var cart={};
 function hasFresh(){return Object.keys(cart).some(function(id){return products.find(function(p){return p.id==id&&p.cat==='fresh';});});}
 function t(k){return T[lang][k]||'';}
@@ -427,17 +432,141 @@ function validateContact(){
   setErr('f_phone','err_phone',t('errPhone'),!phone||!/^[+\d][\d\s\-()+]{6,}$/.test(phone.value.trim()));
   setErr('f_email','err_email',t('errEmail'),!email||!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.value.trim()));
   if(addr) setErr('f_addr','err_addr',t('errReq'),!addr.value.trim());
-  if(ok) goStep('payment');
+  if(ok){
+    savedFormData = {
+      name:     document.getElementById('f_name').value.trim(),
+      phone:    document.getElementById('f_phone').value.trim(),
+      email:    document.getElementById('f_email').value.trim(),
+      whatsapp: document.getElementById('f_wa') ? document.getElementById('f_wa').value.trim() : '',
+      address:  document.getElementById('f_addr') ? document.getElementById('f_addr').value.trim() : '',
+    };
+    goStep('payment');
+  }
 }
+// Store contact form data between steps
+var savedFormData = {};
+
 function validatePayment(){
   var acc=document.getElementById('f_acc5'),errEl=document.getElementById('err_acc5');
   if(!acc||!acc.value.trim()){if(acc)acc.style.borderColor='var(--warn)';if(errEl){errEl.textContent=t('errReq');errEl.style.display='block';}return;}
   if(acc)acc.style.borderColor='';if(errEl)errEl.style.display='none';
-  goStep('done');
+  savedFormData.last4 = acc.value.trim();
+  submitOrder(savedFormData);
 }
 function goStep(s){step=s;renderDrawer();}
 function renderAll(){updateHeader();renderBanner();renderProducts();}
-renderAll();
+// ── Load data from Google Sheet ──────────────────────────
+function loadData() {
+  showLoading(true);
+
+  // If no URL set, use demo products
+  if (!APPS_SCRIPT_URL || APPS_SCRIPT_URL === 'https://script.google.com/macros/s/AKfycby8OR1HMrdynSqtOSvOlIEvYqkvbHZqxKtysDl78Goqx0sf1YTHFh4oGTcMpaJTZ1vW7w/exec') {
+    products = [
+      {id:'1',cat:'frozen',name:{zh:'手工煎餃（豬肉高麗菜）',en:'Pan-fried Dumplings'},desc:{zh:'每包 10 粒，冷凍保存',en:'10 pcs per pack, frozen'},price:8.5,unit:{zh:'包',en:'pack'},stock:true,emoji:'🥟',imageUrl:''},
+      {id:'2',cat:'frozen',name:{zh:'紅燒牛肉麵湯底',en:'Braised Beef Noodle Broth'},desc:{zh:'2人份，加麵即可上桌',en:'Serves 2, just add noodles'},price:12,unit:{zh:'份',en:'portion'},stock:true,emoji:'🍲',imageUrl:''},
+      {id:'3',cat:'frozen',name:{zh:'麻辣湯底',en:'Spicy Broth Base'},desc:{zh:'濃醇香辣，1人份',en:'Rich & spicy, serves 1'},price:7,unit:{zh:'份',en:'portion'},stock:false,emoji:'🌶️',imageUrl:''},
+      {id:'4',cat:'fresh',name:{zh:'手工蔥油餅（現做）',en:'Scallion Pancake'},desc:{zh:'週六現做，外脆內軟',en:'Made Saturday, crispy outside'},price:5,unit:{zh:'片',en:'piece'},stock:true,emoji:'🫓',imageUrl:''},
+      {id:'5',cat:'fresh',name:{zh:'台式滷肉飯套餐',en:'Braised Pork Rice Set'},desc:{zh:'滷肉飯＋滷蛋＋小菜',en:'Braised pork rice + egg + side'},price:9.5,unit:{zh:'份',en:'set'},stock:true,emoji:'🍱',imageUrl:''}
+    ];
+    showLoading(false);
+    renderAll();
+    return;
+  }
+
+  // Load products
+  fetch(APPS_SCRIPT_URL)
+    .then(function(r){ return r.json(); })
+    .then(function(data){
+      if(data.ok && data.products) {
+        products = data.products;
+      }
+      // Load discounts
+      return fetch(APPS_SCRIPT_URL + '?action=getDiscounts');
+    })
+    .then(function(r){ return r.json(); })
+    .then(function(data){
+      if(data.ok && data.discounts) {
+        VALID_CODES = data.discounts;
+      }
+      showLoading(false);
+      renderAll();
+    })
+    .catch(function(err){
+      console.error('Failed to load data:', err);
+      showLoading(false);
+      renderAll();
+    });
+}
+
+function showLoading(show) {
+  var el = document.getElementById('loadingScreen');
+  if(el) el.style.display = show ? 'flex' : 'none';
+}
+
+// ── Submit order to Google Sheet ─────────────────────────
+function submitOrder(formData) {
+  if (!APPS_SCRIPT_URL || APPS_SCRIPT_URL === 'https://script.google.com/macros/s/AKfycby8OR1HMrdynSqtOSvOlIEvYqkvbHZqxKtysDl78Goqx0sf1YTHFh4oGTcMpaJTZ1vW7w/exec') {
+    // Demo mode - just show done
+    goStep('done');
+    return;
+  }
+
+  var isFr = hasFresh();
+  var st = selStation ? ALL_STATIONS.find(function(s){ return s.id===selStation; }) : null;
+  var days = availableDays(isFr);
+  var dayObj = selDay ? days.find(function(d){ return d.key===selDay; }) : null;
+
+  var orderItems = products
+    .filter(function(p){ return (cart[p.id]||0)>0; })
+    .map(function(p){ return { name_zh: p.name.zh, name_en: p.name.en, qty: cart[p.id], price: p.price }; });
+
+  var s = sub(), f = fee(), total = tot();
+  var discAmt = discountPct > 0 ? (s+f)*(discountPct/100) : 0;
+
+  var payload = {
+    action: 'submitOrder',
+    name:         formData.name,
+    phone:        formData.phone,
+    email:        formData.email,
+    whatsapp:     formData.whatsapp || '',
+    address:      formData.address || '',
+    items:        orderItems,
+    subtotal:     s,
+    shippingFee:  f,
+    discountCode: discountCode || '',
+    discountAmount: discAmt,
+    total:        total,
+    deliveryMode: dlvMode,
+    collectionDay:  dayObj ? dayObj.label : '',
+    stationName:  st ? st.name.zh : '',
+    stationTime:  st ? st.time : '',
+    last4Digits:  formData.last4,
+  };
+
+  // Show loading on button
+  var btn = document.querySelector('#drawer-footer .btn-primary');
+  if(btn) { btn.disabled = true; btn.textContent = lang==='zh' ? '送出中...' : 'Submitting...'; }
+
+  fetch(APPS_SCRIPT_URL, {
+    method: 'POST',
+    body: JSON.stringify(payload),
+  })
+  .then(function(r){ return r.json(); })
+  .then(function(data){
+    if(data.ok) {
+      goStep('done');
+    } else {
+      alert(lang==='zh' ? '送出失敗，請稍後再試' : 'Submission failed, please try again');
+      if(btn){ btn.disabled=false; btn.textContent=t('confirmPayment'); }
+    }
+  })
+  .catch(function(){
+    // Still go to done on network error (payment already made)
+    goStep('done');
+  });
+}
+
+loadData();
 </script>
 </body>
 </html>
