@@ -227,7 +227,7 @@ body{font-family:'Jost',sans-serif;font-weight:300;background:var(--cream2);colo
 </div>
 
 <script>
-var APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxrsScH7N6KT0RvinAmpSTb7F-zHk4duaZwtM4TUUENU4MkOHkQLqafTc7T7MjbVS7HTw/exec'; // ← 換成你的 Apps Script URL
+var APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwLBzw3W60_FCnW4zy6dDDJy7u7LsOjUgBhdZe6Dww-8vjSnq9GrR46odo11AQIx4npkw/exec'; // ← 換成你的 Apps Script URL
 
 var lang='zh',step='cart',dlvMode='pickup',selDay='',selStation='',drawerOpen=false;
 var discountCode='',discountPct=0;
@@ -502,6 +502,20 @@ function loadData() {
         }
         if(data.discounts) {
           VALID_CODES = data.discounts;
+        }
+        if(data.settings) {
+          var s = data.settings;
+          // Update banner text from Settings sheet
+          if(s['week_label']) {
+            T.zh.btag = '本週上架 · ' + s['week_label'].toString().toUpperCase();
+            T.en.btag = 'This Week · ' + s['week_label'];
+          }
+          if(s['banner_title_zh']) T.zh.btitle = s['banner_title_zh'];
+          if(s['banner_title_en']) T.en.btitle = s['banner_title_en'];
+          if(s['order_date_zh'])   T.zh.bdate  = s['order_date_zh'];
+          if(s['order_date_en'])   T.en.bdate  = s['order_date_en'];
+          if(s['deadline_zh'])     T.zh.bdeadline = s['deadline_zh'];
+          if(s['deadline_en'])     T.en.bdeadline = s['deadline_en'];
         }
       }
       showLoading(false);
