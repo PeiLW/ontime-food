@@ -460,7 +460,7 @@ function loadData() {
   showLoading(true);
 
   // If no URL set, use demo products
-  if (!APPS_SCRIPT_URL || APPS_SCRIPT_URL === 'https://script.google.com/macros/s/AKfycby8OR1HMrdynSqtOSvOlIEvYqkvbHZqxKtysDl78Goqx0sf1YTHFh4oGTcMpaJTZ1vW7w/exec') {
+  if (!APPS_SCRIPT_URL || APPS_SCRIPT_URL === 'YOUR_APPS_SCRIPT_URL_HERE') {
     products = [
       {id:'1',cat:'frozen',name:{zh:'手工煎餃（豬肉高麗菜）',en:'Pan-fried Dumplings'},desc:{zh:'每包 10 粒，冷凍保存',en:'10 pcs per pack, frozen'},price:8.5,unit:{zh:'包',en:'pack'},stock:true,emoji:'🥟',imageUrl:''},
       {id:'2',cat:'frozen',name:{zh:'紅燒牛肉麵湯底',en:'Braised Beef Noodle Broth'},desc:{zh:'2人份，加麵即可上桌',en:'Serves 2, just add noodles'},price:12,unit:{zh:'份',en:'portion'},stock:true,emoji:'🍲',imageUrl:''},
@@ -505,7 +505,7 @@ function showLoading(show) {
 
 // ── Submit order to Google Sheet ─────────────────────────
 function submitOrder(formData) {
-  if (!APPS_SCRIPT_URL || APPS_SCRIPT_URL === 'https://script.google.com/macros/s/AKfycby8OR1HMrdynSqtOSvOlIEvYqkvbHZqxKtysDl78Goqx0sf1YTHFh4oGTcMpaJTZ1vW7w/exec') {
+  if (!APPS_SCRIPT_URL || APPS_SCRIPT_URL === 'YOUR_APPS_SCRIPT_URL_HERE') {
     // Demo mode - just show done
     goStep('done');
     return;
