@@ -1,0 +1,443 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>準食 · Drawer 版</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500&family=Jost:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0;}
+:root{--cream:#F5F0E8;--cream2:#EDE6D6;--cream3:#D8CDB8;--brown:#8B6F47;--brown2:#6B5035;--brown3:#4A3520;--muted:#9E8A6F;--light:#C4B49A;--white:#FAF7F2;--warn:#C4702A;}
+html,body{height:100%;overflow:hidden;-webkit-font-smoothing:antialiased;}
+body{font-family:'Jost',sans-serif;font-weight:300;background:var(--cream2);color:var(--brown3);}
+#root{display:flex;flex-direction:column;height:100vh;overflow:hidden;background:var(--cream);}
+@media(min-width:768px){
+  body{background:var(--cream2);}
+  #root{max-width:1280px;margin:0 auto;box-shadow:0 0 80px rgba(0,0,0,.12);}
+}
+.scroll-body{flex:1;overflow-y:auto;min-height:0;-webkit-overflow-scrolling:touch;}
+.page-footer{flex-shrink:0;background:var(--white);border-top:1px solid var(--cream3);padding:12px 16px;}
+.footer-row{display:flex;gap:8px;}
+.btn-primary{display:block;width:100%;background:var(--brown3);color:var(--white);border:none;border-radius:8px;padding:13px;font-size:13px;font-family:'Jost',sans-serif;letter-spacing:0.06em;cursor:pointer;text-align:center;transition:background 0.15s;}
+.btn-primary:hover{background:var(--brown2);}
+.btn-secondary{padding:13px 18px;border:1.5px solid var(--brown3);border-radius:8px;background:none;color:var(--brown3);font-size:13px;font-family:'Jost',sans-serif;cursor:pointer;transition:background 0.15s;white-space:nowrap;}
+.btn-secondary:hover{background:var(--cream2);}
+/* Header */
+.hdr{flex-shrink:0;background:var(--white);border-bottom:1px solid var(--cream3);padding:0 20px;height:56px;display:flex;align-items:center;justify-content:space-between;z-index:10;}
+.logo{cursor:pointer;}
+.logo-main{font-family:'Cormorant Garamond',serif;font-size:20px;font-weight:500;color:var(--brown3);letter-spacing:0.05em;line-height:1.2;}
+.logo-sub{font-size:9px;color:var(--muted);letter-spacing:0.2em;text-transform:uppercase;}
+.hdr-right{display:flex;align-items:center;gap:8px;flex-shrink:0;}
+.lang-btn{width:42px;height:28px;font-size:11px;font-weight:500;color:var(--brown3);border:1.5px solid var(--brown3);border-radius:6px;background:none;cursor:pointer;font-family:'Jost',sans-serif;display:flex;align-items:center;justify-content:center;transition:background 0.15s;}
+.lang-btn:hover{background:var(--cream2);}
+.cart-pill{display:flex;align-items:center;gap:6px;background:var(--brown3);color:var(--white);border:none;border-radius:20px;padding:6px 14px;font-size:12px;font-family:'Jost',sans-serif;cursor:pointer;transition:background 0.15s;}
+.cart-pill:hover{background:var(--brown2);}
+.cart-dot{width:17px;height:17px;border-radius:50%;background:var(--warn);color:white;font-size:9px;display:flex;align-items:center;justify-content:center;font-weight:500;}
+/* Banner */
+.banner{background:var(--cream2);border-bottom:1px solid var(--cream3);padding:24px 20px 20px;}
+.banner-tag{display:inline-block;font-size:10px;letter-spacing:0.14em;color:var(--muted);border:1px solid var(--light);border-radius:20px;padding:3px 10px;margin-bottom:10px;text-transform:uppercase;}
+.banner-title{font-family:'Cormorant Garamond',serif;font-size:22px;font-weight:500;color:var(--brown3);margin-bottom:6px;line-height:1.4;}
+@media(min-width:768px){.banner-title{font-size:26px;}}
+.banner-meta{font-size:11px;color:var(--muted);display:flex;align-items:center;gap:10px;flex-wrap:wrap;}
+.deadline{background:var(--brown3);color:var(--cream);font-size:10px;padding:3px 10px;border-radius:20px;}
+/* Tabs */
+.cat-tabs{display:flex;border-bottom:1px solid var(--cream3);background:var(--white);}
+.cat-tab{flex:1;padding:12px 8px;font-size:12px;font-weight:400;color:var(--brown3);border:none;background:none;cursor:pointer;font-family:'Jost',sans-serif;border-bottom:2px solid transparent;transition:all 0.15s;text-align:center;}
+.cat-tab.active{background:var(--brown3);color:var(--white);border-bottom-color:var(--brown3);font-weight:500;}
+.cat-tab:not(.active):hover{background:var(--cream2);}
+/* Products */
+.sec-label{font-size:10px;letter-spacing:0.14em;color:var(--muted);padding:14px 20px 6px;text-transform:uppercase;}
+.prod-list{padding:0 12px 16px;}
+@media(min-width:768px){.prod-list{padding:0 16px 20px;}}
+.prod-card{display:flex;gap:12px;padding:12px 8px;border-bottom:1px solid var(--cream3);background:var(--white);border-radius:10px;margin-bottom:8px;align-items:center;}
+.prod-img{width:72px;height:72px;border-radius:8px;background:var(--cream2);flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:26px;overflow:hidden;}
+.prod-img img{width:100%;height:100%;object-fit:cover;}
+@media(min-width:768px){.prod-img{width:80px;height:80px;}}
+.prod-body{flex:1;min-width:0;}
+.prod-name{font-size:14px;font-weight:500;color:var(--brown3);margin-bottom:2px;}
+.prod-desc{font-size:11px;color:var(--muted);line-height:1.5;margin-bottom:5px;}
+.prod-price{font-size:15px;color:var(--brown2);font-family:'Cormorant Garamond',serif;font-weight:500;}
+.prod-unit{font-size:11px;color:var(--muted);font-family:'Jost',sans-serif;font-weight:300;}
+.sold-badge{font-size:10px;color:var(--brown2);background:var(--cream2);border:1px solid var(--cream3);padding:4px 10px;border-radius:10px;white-space:nowrap;flex-shrink:0;}
+.qty-ctrl{display:flex;align-items:center;border:1.5px solid var(--brown3);border-radius:20px;overflow:hidden;flex-shrink:0;background:var(--white);}
+.qty-btn{width:30px;height:30px;background:none;border:none;cursor:pointer;font-size:16px;color:var(--brown3);display:flex;align-items:center;justify-content:center;transition:background 0.12s;}
+.qty-btn:hover{background:var(--cream2);}
+.qty-n{min-width:24px;text-align:center;font-size:13px;font-weight:500;color:var(--brown3);}
+/* Mobile shop footer */
+#shopFooter{display:none;}
+/* ── DRAWER ── */
+.drawer-overlay{position:fixed;inset:0;background:rgba(44,31,14,0);z-index:100;pointer-events:none;transition:background 0.3s;}
+.drawer-overlay.open{background:rgba(44,31,14,0.4);pointer-events:all;}
+.drawer{position:fixed;top:0;right:0;bottom:0;width:min(440px,92vw);background:var(--white);z-index:101;display:flex;flex-direction:column;transform:translateX(100%);transition:transform 0.3s cubic-bezier(0.4,0,0.2,1);box-shadow:-4px 0 24px rgba(0,0,0,.08);}
+.drawer.open{transform:translateX(0);}
+.drawer-hdr{flex-shrink:0;display:flex;align-items:center;justify-content:space-between;padding:0 20px;height:56px;border-bottom:1px solid var(--cream3);}
+.drawer-title{font-family:'Cormorant Garamond',serif;font-size:18px;font-weight:500;color:var(--brown3);}
+.drawer-close{width:32px;height:32px;border:none;background:none;cursor:pointer;font-size:20px;color:var(--muted);display:flex;align-items:center;justify-content:center;border-radius:50%;transition:background 0.15s;}
+.drawer-close:hover{background:var(--cream2);}
+.drawer-scroll{flex:1;overflow-y:auto;min-height:0;-webkit-overflow-scrolling:touch;}
+.drawer-footer{flex-shrink:0;background:var(--white);border-top:1px solid var(--cream3);padding:12px 20px;}
+/* Step indicator */
+.steps-wrap{padding:16px 20px 4px;flex-shrink:0;}
+.steps-track{display:flex;align-items:center;}
+.step-dot{width:24px;height:24px;border-radius:50%;border:1.5px solid var(--cream3);display:flex;align-items:center;justify-content:center;font-size:10px;color:var(--muted);flex-shrink:0;}
+.step-dot.done{background:var(--brown3);border-color:var(--brown3);color:var(--white);}
+.step-dot.active{border-color:var(--brown3);color:var(--brown3);font-weight:700;}
+.step-line{flex:1;height:1px;background:var(--cream3);}
+.step-line.done{background:var(--brown3);}
+.steps-labels{display:flex;align-items:flex-start;margin-top:6px;padding-bottom:8px;}
+.slbl-dot{width:24px;flex-shrink:0;display:flex;justify-content:center;overflow:visible;}
+.slbl-dot span{font-size:9px;color:var(--muted);white-space:nowrap;display:block;text-align:center;transform:translateX(-50%);margin-left:50%;}
+.slbl-dot span.active{color:var(--brown3);font-weight:500;}
+.slbl-space{flex:1;}
+/* Cart content */
+.cart-wrap{padding:14px 20px 12px;}
+.section-head{font-family:'Cormorant Garamond',serif;font-size:17px;font-weight:500;color:var(--brown3);margin-bottom:12px;}
+.ci-row{display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid var(--cream3);}
+.ci-name{font-size:13px;font-weight:500;color:var(--brown3);}
+.ci-sub{font-size:11px;color:var(--muted);margin-top:2px;}
+.ci-price{font-family:'Cormorant Garamond',serif;font-size:16px;font-weight:500;color:var(--brown2);}
+.dlv-block{margin:16px 0 10px;}
+.dlv-label{font-size:10px;letter-spacing:0.14em;color:var(--muted);text-transform:uppercase;margin-bottom:10px;}
+.dlv-opts{display:flex;gap:8px;margin-bottom:12px;}
+.dlv-opt{flex:1;border:1.5px solid var(--cream3);border-radius:10px;padding:12px 10px;cursor:pointer;background:var(--cream);font-family:'Jost',sans-serif;text-align:left;transition:border-color 0.15s;}
+.dlv-opt.sel{border-color:var(--brown3);background:var(--cream2);}
+.dlv-opt:not(.sel):hover{border-color:var(--brown);}
+.dlv-opt-name{font-size:13px;font-weight:500;color:var(--brown3);}
+.dlv-opt-fee{font-size:11px;color:var(--muted);margin-top:3px;}
+.day-chips{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:6px;}
+.day-chip{padding:7px 16px;border:1.5px solid var(--cream3);border-radius:20px;font-size:12px;font-family:'Jost',sans-serif;color:var(--brown3);background:var(--cream);cursor:pointer;transition:all 0.15s;}
+.day-chip.sel{border-color:var(--brown3);background:var(--cream2);font-weight:500;}
+.day-chip:not(.sel):hover{border-color:var(--brown);}
+.station-grid{display:flex;flex-direction:column;gap:6px;margin-top:6px;}
+.station-card{border:1.5px solid var(--cream3);border-radius:8px;padding:10px 14px;cursor:pointer;background:var(--cream);transition:border-color 0.15s;display:flex;justify-content:space-between;align-items:center;}
+.station-card.sel{border-color:var(--brown3);background:var(--cream2);}
+.station-card:not(.sel):hover{border-color:var(--brown);}
+.station-name{font-size:13px;font-weight:500;color:var(--brown3);}
+.station-time{font-size:11px;color:var(--muted);}
+.total-rows{padding:10px 0 2px;}
+.t-row{display:flex;justify-content:space-between;font-size:13px;padding:4px 0;color:var(--muted);}
+.t-row.main{font-size:16px;color:var(--brown3);font-family:'Cormorant Garamond',serif;font-weight:500;padding-top:10px;margin-top:6px;border-top:1px solid var(--cream3);}
+.discount-block{margin-top:16px;}
+.discount-row{display:flex;gap:8px;}
+.discount-row .f-input{margin-bottom:0;flex:1;text-transform:uppercase;}
+.discount-apply{padding:10px 16px;background:var(--brown3);color:var(--white);border:none;border-radius:8px;font-size:12px;font-family:'Jost',sans-serif;cursor:pointer;white-space:nowrap;transition:background 0.15s;}
+.discount-apply:hover{background:var(--brown2);}
+.order-mini{background:var(--cream2);border:1px solid var(--cream3);border-radius:8px;padding:10px 14px;margin-bottom:14px;}
+.order-mini-title{font-size:10px;letter-spacing:0.1em;color:var(--muted);text-transform:uppercase;margin-bottom:6px;}
+.order-mini-row{display:flex;justify-content:space-between;font-size:12px;color:var(--brown3);padding:2px 0;}
+.order-mini-total{display:flex;justify-content:space-between;font-size:13px;font-weight:500;color:var(--brown3);padding-top:6px;margin-top:4px;border-top:1px solid var(--cream3);}
+.f-label{font-size:10px;letter-spacing:0.1em;color:var(--muted);display:block;margin-bottom:5px;text-transform:uppercase;}
+.f-input{width:100%;padding:11px 12px;border:1.5px solid var(--cream3);border-radius:8px;font-size:14px;font-family:'Jost',sans-serif;background:var(--cream);color:var(--brown3);outline:none;transition:border-color 0.15s;margin-bottom:12px;}
+.f-input:focus{border-color:var(--brown3);}
+.f-input::placeholder{color:var(--light);}
+.f-err{display:none;font-size:10px;color:var(--warn);margin:-8px 0 8px;}
+.bank-box{background:var(--cream2);border:1px solid var(--cream3);border-radius:10px;padding:14px;margin-bottom:14px;}
+.bank-title{font-size:10px;letter-spacing:0.12em;color:var(--muted);text-transform:uppercase;margin-bottom:10px;}
+.bank-row{display:flex;justify-content:space-between;font-size:13px;padding:5px 0;border-bottom:1px solid var(--cream3);}
+.bank-row:last-of-type{border-bottom:none;}
+.bank-k{color:var(--muted);}
+.bank-v{font-weight:500;color:var(--brown3);}
+.amt-due-row{display:flex;justify-content:space-between;align-items:center;padding:10px 0 2px;border-top:1px solid var(--cream3);margin-top:6px;}
+.amt-due-label{font-size:12px;color:var(--muted);}
+.amt-due-val{font-family:'Cormorant Garamond',serif;font-size:20px;font-weight:500;color:var(--warn);}
+.note{font-size:11px;color:var(--muted);background:var(--cream2);border-radius:8px;padding:10px 14px;margin:10px 0;line-height:1.7;}
+.success{padding:32px 20px;text-align:center;display:flex;flex-direction:column;align-items:center;}
+.s-icon{width:54px;height:54px;border-radius:50%;background:var(--cream2);border:1px solid var(--cream3);display:flex;align-items:center;justify-content:center;font-size:22px;margin:0 auto 14px;}
+.s-title{font-family:'Cormorant Garamond',serif;font-size:22px;font-weight:500;color:var(--brown3);margin-bottom:8px;}
+.s-sub{font-size:13px;color:var(--muted);line-height:1.8;margin-bottom:16px;white-space:pre-line;}
+.done-actions{display:flex;gap:10px;width:100%;}
+.done-actions a,.done-actions button{flex:1;}
+</style>
+</head>
+<body>
+<div id="root">
+  <div class="hdr">
+    <div class="logo" onclick="goHome()">
+      <div class="logo-main">準食</div>
+      <div class="logo-sub">on-time food</div>
+    </div>
+    <div class="hdr-right">
+      <button class="lang-btn" onclick="toggleLang()" id="langBtn">EN</button>
+      <button class="cart-pill" onclick="openDrawer()">
+        <span id="cartLabel">購物車</span>
+        <div class="cart-dot" id="cartDot">0</div>
+      </button>
+    </div>
+  </div>
+  <div class="scroll-body">
+    <div class="banner">
+      <div class="banner-tag" id="b-tag">本週上架 · WEEK 12</div>
+      <div class="banner-title" id="b-title">精選食材，新鮮直送</div>
+      <div class="banner-meta">
+        <span id="b-date">2025 年 3 月 18 日</span>
+        <span class="deadline" id="b-deadline">週二 23:59 截單</span>
+      </div>
+    </div>
+    <div class="cat-tabs">
+      <button class="cat-tab active" onclick="setTab(0,'frozen')" id="tab0">❄ 冷凍食品</button>
+      <button class="cat-tab" onclick="setTab(1,'fresh')" id="tab1">🌿 現做食品</button>
+    </div>
+    <div id="sec-frozen">
+      <div class="sec-label" id="sl1">冷凍 · 隨時可下單</div>
+      <div class="prod-list" id="list-frozen"></div>
+    </div>
+    <div id="sec-fresh" style="display:none;">
+      <div class="sec-label" id="sl2">現做 · 本週六自取</div>
+      <div class="prod-list" id="list-fresh"></div>
+    </div>
+  </div>
+  <div class="page-footer" id="shopFooter">
+    <button class="btn-primary" onclick="openDrawer()" id="shopCtaBtn">前往購物車</button>
+  </div>
+</div>
+
+<!-- Drawer -->
+<div class="drawer-overlay" id="drawerOverlay" onclick="closeDrawer()"></div>
+<div class="drawer" id="drawer">
+  <div class="drawer-hdr">
+    <div class="drawer-title" id="drawerTitle">購物車</div>
+    <button class="drawer-close" onclick="closeDrawer()">×</button>
+  </div>
+  <div class="drawer-scroll" id="drawer-scroll"></div>
+  <div class="drawer-footer" id="drawer-footer"></div>
+</div>
+
+<script>
+var lang='zh',step='cart',dlvMode='pickup',selDay='',selStation='',drawerOpen=false;
+var discountCode='',discountPct=0;
+var VALID_CODES={'WELCOME10':10,'KIMVA15':15};
+var STEP_ORDER=['cart','contact','payment','done'];
+var LABELS={zh:['訂單','聯絡','匯款','完成'],en:['Cart','Details','Payment','Done']};
+var ALL_STATIONS=[
+  {id:'ne',name:{zh:'Nine Elms',en:'Nine Elms'},time:'2:00 pm – 4:00 pm'},
+  {id:'tcr',name:{zh:'Tottenham Court Road',en:'Tottenham Court Road'},time:'4:00 pm – 6:00 pm'},
+  {id:'pad',name:{zh:'Paddington',en:'Paddington'},time:'7:00 pm – 9:00 pm'}
+];
+function availableDays(f){
+  if(f) return lang==='zh'?[{key:'sat',label:'週六'}]:[{key:'sat',label:'Sat'}];
+  return lang==='zh'?[{key:'tue',label:'週二'},{key:'thu',label:'週四'},{key:'sat',label:'週六'}]:[{key:'tue',label:'Tue'},{key:'thu',label:'Thu'},{key:'sat',label:'Sat'}];
+}
+var T={
+  zh:{cart:'購物車',goCart:'前往購物車',langBtn:'EN',btag:'本週上架 · WEEK 12',btitle:'精選食材，新鮮直送',bdate:'2025 年 3 月 18 日',bdeadline:'週二 23:59 截單',tabFrozen:'❄ 冷凍食品',tabFresh:'🌿 現做食品',sl1:'冷凍 · 隨時可下單',sl2:'現做 · 本週六自取',soldout:'暫時售完',orderDetail:'訂單明細',delivery:'交貨方式',pickup:'自取',deliver:'宅配',pickupDayLabel:'選擇取貨日期',pickupStationLabel:'選擇取貨站',deliverNote:'DPD 平日晚上出貨',deliverFee:'+ £10',free:'免費',freshOnlyNote:'⚠ 含現做品項，取貨限週六',contact:'聯絡資訊',name:'姓名',phone:'聯絡電話',email:'Email',wa:'WhatsApp',addr:'收件地址',addrPh:'Street, City, Postcode',bankTitle:'匯款資訊',bankNote:'請匯款至以下帳戶',acc5:'匯款帳號末四碼',acc5ph:'填寫末四碼方便我們對帳',note1:'請完成匯款後填寫末四碼，我們確認後將以 WhatsApp 或 Email 通知您。',confirmPayment:'已完成匯款 →',back:'← 返回',next:'填寫聯絡資訊 →',toPayment:'前往匯款 →',doneTitle:'感謝您的訂購！',doneSub:'我們已收到您的訂單\n確認匯款後將透過 WhatsApp 或 Email 通知您',subtotal:'小計',shipping:'運費',total:'總計',orderSummary:'訂單摘要',discountLabel:'折扣碼',discountApply:'套用',discountPh:'輸入折扣碼',discountOk:'✓ 折扣碼已套用！節省 ',discountFail:'✗ 無效的折扣碼',waContact:'WhatsApp 聯繫我們',backHome:'回到主頁',acctName:'帳戶名稱',acctNo:'帳號',amtDue:'應付金額',emptyCart:'購物車是空的',continueShopping:'← 繼續選購',errReq:'此欄位為必填',errPhone:'請輸入有效的電話號碼',errEmail:'請輸入有效的 Email',collDay:'取貨日期',collPoint:'取貨站',collTime:'時間',drawerTitle:'購物車'},
+  en:{cart:'Cart',goCart:'Go to Cart',langBtn:'中',btag:'This Week · Week 12',btitle:'Fresh & Honest Food',bdate:'18 March 2025',bdeadline:'Order by Tue 23:59',tabFrozen:'❄ Frozen',tabFresh:'🌿 Freshly Made',sl1:'Frozen · Order anytime',sl2:'Freshly made · This Saturday',soldout:'Sold Out',orderDetail:'Order Summary',delivery:'Delivery',pickup:'Collection',deliver:'Delivery',pickupDayLabel:'Choose collection day',pickupStationLabel:'Choose collection point',deliverNote:'DPD weekday evenings',deliverFee:'+ £10',free:'Free',freshOnlyNote:'⚠ Fresh items — Saturday only',contact:'Contact Details',name:'Full Name',phone:'Phone',email:'Email',wa:'WhatsApp',addr:'Delivery Address',addrPh:'Street, City, Postcode',bankTitle:'Payment',bankNote:'Please transfer to the account below',acc5:'Last 4 digits of account',acc5ph:'Helps us match your payment',note1:"Transfer the amount, then enter the last 4 digits. We'll confirm via WhatsApp or Email.",confirmPayment:'I have transferred →',back:'← Back',next:'Continue →',toPayment:'Go to Payment →',doneTitle:'Order Received!',doneSub:"We've got your order.\nWe'll confirm via WhatsApp or Email once payment is received.",subtotal:'Subtotal',shipping:'Shipping',total:'Total',orderSummary:'Order Summary',discountLabel:'Discount Code',discountApply:'Apply',discountPh:'Enter discount code',discountOk:'✓ Discount applied! Saving ',discountFail:'✗ Invalid discount code',waContact:'Contact us on WhatsApp',backHome:'Back to Home',acctName:'Account Name',acctNo:'Account No.',amtDue:'Amount Due',emptyCart:'Your cart is empty',continueShopping:'← Continue Shopping',errReq:'This field is required',errPhone:'Please enter a valid phone number',errEmail:'Please enter a valid email',collDay:'Collection Day',collPoint:'Collection Point',collTime:'Time',drawerTitle:'Cart'}
+};
+var products=[
+  {id:1,cat:'frozen',name:{zh:'手工煎餃（豬肉高麗菜）',en:'Pan-fried Dumplings'},desc:{zh:'每包 10 粒，冷凍保存',en:'10 pcs per pack, frozen'},price:8.5,unit:{zh:'包',en:'pack'},stock:true,emoji:'🥟'},
+  {id:2,cat:'frozen',name:{zh:'紅燒牛肉麵湯底',en:'Braised Beef Noodle Broth'},desc:{zh:'2人份，加麵即可上桌',en:'Serves 2, just add noodles'},price:12,unit:{zh:'份',en:'portion'},stock:true,emoji:'🍲'},
+  {id:3,cat:'frozen',name:{zh:'麻辣湯底',en:'Spicy Broth Base'},desc:{zh:'濃醇香辣，1人份',en:'Rich & spicy, serves 1'},price:7,unit:{zh:'份',en:'portion'},stock:false,emoji:'🌶️'},
+  {id:4,cat:'fresh',name:{zh:'手工蔥油餅（現做）',en:'Scallion Pancake'},desc:{zh:'週六現做，外脆內軟',en:'Made Saturday, crispy outside'},price:5,unit:{zh:'片',en:'piece'},stock:true,emoji:'🫓'},
+  {id:5,cat:'fresh',name:{zh:'台式滷肉飯套餐',en:'Braised Pork Rice Set'},desc:{zh:'滷肉飯＋滷蛋＋小菜',en:'Braised pork rice + egg + side'},price:9.5,unit:{zh:'份',en:'set'},stock:true,emoji:'🍱'}
+];
+var cart={};
+function hasFresh(){return Object.keys(cart).some(function(id){return products.find(function(p){return p.id==id&&p.cat==='fresh';});});}
+function t(k){return T[lang][k]||'';}
+function cartCount(){return Object.values(cart).reduce(function(s,v){return s+v;},0);}
+function sub(){return products.reduce(function(s,p){return s+(cart[p.id]||0)*p.price;},0);}
+function fee(){return dlvMode==='deliver'?10:0;}
+function tot(){var base=sub()+fee();if(discountPct>0)base=base*(1-discountPct/100);return base;}
+function fmt(n){return '£'+n.toFixed(2);}
+
+function openDrawer(){drawerOpen=true;step='cart';document.getElementById('drawer').classList.add('open');document.getElementById('drawerOverlay').classList.add('open');document.body.style.overflow='hidden';renderDrawer();}
+function closeDrawer(){drawerOpen=false;document.getElementById('drawer').classList.remove('open');document.getElementById('drawerOverlay').classList.remove('open');document.body.style.overflow='';}
+function goHome(){closeDrawer();}
+
+function buildSteps(current){
+  var ci=STEP_ORDER.indexOf(current),labels=LABELS[lang],d='',l='';
+  for(var i=0;i<4;i++){
+    var isDone=i<ci,isActive=i===ci;
+    if(i>0) d+='<div class="step-line '+(i<=ci?'done':'')+'"></div>';
+    d+='<div class="step-dot '+(isDone?'done':isActive?'active':'')+'">'+(isDone?'✓':i+1)+'</div>';
+  }
+  for(var j=0;j<4;j++){
+    if(j>0) l+='<div class="slbl-space"></div>';
+    l+='<div class="slbl-dot"><span class="'+(j===ci?'active':'')+'">'+labels[j]+'</span></div>';
+  }
+  return '<div class="steps-wrap"><div class="steps-track">'+d+'</div><div class="steps-labels">'+l+'</div></div>';
+}
+function orderMini(){
+  var items=products.filter(function(p){return (cart[p.id]||0)>0;});
+  var isFr=hasFresh(),st=selStation?ALL_STATIONS.find(function(s){return s.id===selStation;}):null;
+  var days=availableDays(isFr),dayObj=selDay?days.find(function(d){return d.key===selDay;}):null,dayLabel=dayObj?dayObj.label:'';
+  var html='<div class="order-mini"><div class="order-mini-title">'+t('orderSummary')+'</div>';
+  items.forEach(function(p){html+='<div class="order-mini-row"><span>'+p.name[lang]+' × '+cart[p.id]+'</span><span>'+fmt(cart[p.id]*p.price)+'</span></div>';});
+  if(dlvMode==='deliver') html+='<div class="order-mini-row"><span>'+t('deliver')+'</span><span>'+fmt(fee())+'</span></div>';
+  if(st&&dayLabel) html+='<div class="order-mini-row" style="color:var(--muted);font-size:11px;"><span>'+t('pickup')+' · '+dayLabel+' · '+st.name[lang]+'</span><span>'+st.time+'</span></div>';
+  if(discountPct>0){var base=sub()+fee();html+='<div class="order-mini-row" style="color:var(--brown2);"><span>'+(lang==='zh'?'折扣碼 · ':'Code · ')+discountCode+'</span><span>- '+fmt(base*(discountPct/100))+'</span></div>';}
+  html+='<div class="order-mini-total"><span>'+t('total')+'</span><span>'+fmt(tot())+'</span></div></div>';
+  return html;
+}
+function applyDiscount(){
+  var inp=document.getElementById('discount_code'),msg=document.getElementById('discount-msg');
+  if(!inp||!msg) return;
+  var code=inp.value.trim().toUpperCase();
+  if(!code){msg.style.display='none';return;}
+  if(VALID_CODES[code]!==undefined){discountCode=code;discountPct=VALID_CODES[code];msg.style.color='var(--brown2)';msg.textContent=t('discountOk')+discountPct+'%';msg.style.display='block';renderDrawer();}
+  else{discountCode='';discountPct=0;msg.style.color='var(--warn)';msg.textContent=t('discountFail');msg.style.display='block';}
+}
+function toggleLang(){lang=lang==='zh'?'en':'zh';renderAll();}
+function setTab(i,tab){
+  document.querySelectorAll('.cat-tab').forEach(function(el,j){el.classList.toggle('active',i===j);});
+  document.getElementById('sec-frozen').style.display=tab==='frozen'?'block':'none';
+  document.getElementById('sec-fresh').style.display=tab==='fresh'?'block':'none';
+}
+function setQty(id,v){
+  if(v<=0) delete cart[id]; else cart[id]=v;
+  var days=availableDays(hasFresh());
+  if(selDay&&!days.find(function(d){return d.key===selDay;})) selDay='';
+  updateHeader();renderProducts();
+  var f=document.getElementById('shopFooter');
+  if(f) f.style.display=cartCount()>0?'block':'none';
+  var btn=document.getElementById('shopCtaBtn');
+  if(btn) btn.textContent=t('goCart')+' ('+cartCount()+')';
+  if(drawerOpen) renderDrawer();
+}
+function updateHeader(){
+  document.getElementById('cartDot').textContent=cartCount();
+  document.getElementById('cartLabel').textContent=t('cart');
+  document.getElementById('langBtn').textContent=t('langBtn');
+  var dt=document.getElementById('drawerTitle');if(dt) dt.textContent=t('drawerTitle');
+}
+function renderProducts(){
+  ['frozen','fresh'].forEach(function(cat){
+    var el=document.getElementById('list-'+cat);if(!el)return;
+    el.innerHTML=products.filter(function(p){return p.cat===cat;}).map(function(p){
+      return '<div class="prod-card"><div class="prod-img">'+p.emoji+'</div><div class="prod-body"><div class="prod-name">'+p.name[lang]+'</div><div class="prod-desc">'+p.desc[lang]+'</div><div class="prod-price">'+fmt(p.price)+' <span class="prod-unit">/ '+p.unit[lang]+'</span></div></div>'
+        +(p.stock?'<div class="qty-ctrl"><button class="qty-btn" onclick="setQty('+p.id+','+(((cart[p.id]||0))-1)+')">−</button><div class="qty-n">'+(cart[p.id]||0)+'</div><button class="qty-btn" onclick="setQty('+p.id+','+(((cart[p.id]||0))+1)+')">+</button></div>':'<span class="sold-badge">'+t('soldout')+'</span>')
+        +'</div>';
+    }).join('');
+  });
+}
+function renderBanner(){
+  var map={'b-tag':'btag','b-title':'btitle','b-date':'bdate','b-deadline':'bdeadline','sl1':'sl1','sl2':'sl2'};
+  Object.keys(map).forEach(function(id){var el=document.getElementById(id);if(el) el.textContent=t(map[id]);});
+  document.getElementById('tab0').textContent=t('tabFrozen');
+  document.getElementById('tab1').textContent=t('tabFresh');
+}
+function renderDrawer(){
+  var scrollEl=document.getElementById('drawer-scroll');
+  var footerEl=document.getElementById('drawer-footer');
+  var items=products.filter(function(p){return (cart[p.id]||0)>0;});
+  var s=sub(),f=fee(),total=tot();
+  var isFr=hasFresh(),days=availableDays(isFr);
+  if(selDay&&!days.find(function(d){return d.key===selDay;})) selDay='';
+
+  if(step==='cart'&&!items.length){
+    scrollEl.innerHTML='<div style="text-align:center;padding:60px 20px;"><div style="font-size:36px;margin-bottom:14px;">🛒</div><div style="font-size:14px;color:var(--brown3);margin-bottom:16px;">'+t('emptyCart')+'</div><button class="btn-secondary" onclick="closeDrawer()">'+t('continueShopping')+'</button></div>';
+    footerEl.innerHTML='';return;
+  }
+
+  if(step==='cart'){
+    var pickupExtra='';
+    if(dlvMode==='pickup'){
+      var chipHtml=days.map(function(d){return '<div class="day-chip '+(selDay===d.key?'sel':'')+'" onclick="selDay=\''+d.key+'\';renderDrawer();">'+d.label+'</div>';}).join('');
+      var stHtml='';
+      if(selDay){
+        stHtml='<div style="font-size:11px;color:var(--muted);margin:10px 0 6px;">'+t('pickupStationLabel')+' <span style="color:var(--warn)">*</span></div><div class="station-grid">';
+        ALL_STATIONS.forEach(function(s){stHtml+='<div class="station-card '+(selStation===s.id?'sel':'')+'" onclick="selStation=\''+s.id+'\';renderDrawer();"><span class="station-name">'+s.name[lang]+'</span><span class="station-time">'+s.time+'</span></div>';});
+        stHtml+='</div><div id="station-err" class="f-err">'+(lang==='zh'?'此欄位為必填':'This field is required')+'</div>';
+      }
+      pickupExtra=(isFr?'<div class="note" style="margin-bottom:10px;">'+t('freshOnlyNote')+'</div>':'')
+        +'<div style="font-size:11px;color:var(--muted);margin-bottom:8px;">'+t('pickupDayLabel')+' <span style="color:var(--warn)">*</span></div>'
+        +'<div class="day-chips">'+chipHtml+'</div>'
+        +'<div id="day-err" class="f-err">'+(lang==='zh'?'此欄位為必填':'This field is required')+'</div>'+stHtml;
+    } else {
+      pickupExtra='<div class="note">'+t('deliverNote')+'</div>';
+    }
+    scrollEl.innerHTML=buildSteps('cart')
+      +'<div class="cart-wrap"><div class="section-head">'+t('orderDetail')+'</div>'
+      +items.map(function(p){return '<div class="ci-row"><div><div class="ci-name">'+p.name[lang]+'</div><div class="ci-sub">× '+cart[p.id]+' '+p.unit[lang]+'</div></div><div class="ci-price">'+fmt(cart[p.id]*p.price)+'</div></div>';}).join('')
+      +'<div class="dlv-block"><div class="dlv-label">'+t('delivery')+' <span style="color:var(--warn)">*</span></div>'
+      +'<div class="dlv-opts"><button class="dlv-opt '+(dlvMode==='pickup'?'sel':'')+'" onclick="dlvMode=\'pickup\';selStation=\'\';renderDrawer();"><div class="dlv-opt-name">'+t('pickup')+'</div><div class="dlv-opt-fee">'+t('free')+'</div></button>'
+      +'<button class="dlv-opt '+(dlvMode==='deliver'?'sel':'')+'" onclick="dlvMode=\'deliver\';selStation=\'\';renderDrawer();"><div class="dlv-opt-name">'+t('deliver')+'</div><div class="dlv-opt-fee">'+t('deliverFee')+'</div></button></div>'
+      +pickupExtra+'</div>'
+      +'<div class="discount-block"><div class="f-label">'+t('discountLabel')+'</div>'
+      +'<div class="discount-row"><input class="f-input" type="text" id="discount_code" placeholder="'+t('discountPh')+'" value="'+discountCode+'"/>'
+      +'<button class="discount-apply" onclick="applyDiscount()">'+t('discountApply')+'</button></div>'
+      +'<div id="discount-msg" style="font-size:11px;margin-top:4px;'+(discountPct>0?'color:var(--brown2)':'color:var(--warn)')+';display:'+(discountCode?'block':'none')+';">'+(discountPct>0?t('discountOk')+discountPct+'%':(discountCode?t('discountFail'):''))+'</div></div>'
+      +'<div class="total-rows"><div class="t-row"><span>'+t('subtotal')+'</span><span>'+fmt(s)+'</span></div>'
+      +'<div class="t-row"><span>'+t('shipping')+'</span><span>'+(f===0?t('free'):fmt(f))+'</span></div>'
+      +(discountPct>0?'<div class="t-row"><span>'+(lang==='zh'?'折扣碼 · ':'Code · ')+discountCode+'</span><span style="color:var(--brown2)">- '+fmt((s+f)*(discountPct/100))+'</span></div>':'')
+      +'<div class="t-row main"><span>'+t('total')+'</span><span>'+fmt(total)+'</span></div></div></div>';
+    footerEl.style.display='block';
+    footerEl.innerHTML='<button class="btn-primary" onclick="validateCart()">'+t('next')+'</button>';
+  }
+
+  if(step==='contact'){
+    scrollEl.innerHTML=buildSteps('contact')+'<div class="cart-wrap">'+orderMini()
+      +'<div class="section-head">'+t('contact')+'</div>'
+      +'<label class="f-label">'+t('name')+' <span style="color:var(--warn)">*</span></label><input class="f-input" type="text" id="f_name" placeholder="'+(lang==='zh'?'請輸入姓名':'Your full name')+'"/><div id="err_name" class="f-err">'+t('errReq')+'</div>'
+      +'<label class="f-label">'+t('phone')+' <span style="color:var(--warn)">*</span></label><input class="f-input" type="tel" id="f_phone" placeholder="+44 7xxx xxxxxx"/><div id="err_phone" class="f-err">'+t('errPhone')+'</div>'
+      +'<label class="f-label">'+t('email')+' <span style="color:var(--warn)">*</span></label><input class="f-input" type="email" id="f_email" placeholder="you@example.com"/><div id="err_email" class="f-err">'+t('errEmail')+'</div>'
+      +'<label class="f-label">'+t('wa')+' <span style="font-size:9px;color:var(--muted)">'+(lang==='zh'?'（選填）':'(optional)')+'</span></label><input class="f-input" type="text" id="f_wa" placeholder="+44 7xxx xxxxxx"/>'
+      +(dlvMode==='deliver'?'<label class="f-label">'+t('addr')+' <span style="color:var(--warn)">*</span></label><input class="f-input" type="text" id="f_addr" placeholder="'+t('addrPh')+'"/><div id="err_addr" class="f-err">'+t('errReq')+'</div>':'')
+      +'</div>';
+    footerEl.style.display='block';
+    footerEl.innerHTML='<div class="footer-row"><button class="btn-secondary" onclick="goStep(\'cart\')">'+t('back')+'</button><button class="btn-primary" style="flex:1;" onclick="validateContact()">'+t('toPayment')+'</button></div>';
+  }
+
+  if(step==='payment'){
+    scrollEl.innerHTML=buildSteps('payment')+'<div class="cart-wrap">'+orderMini()
+      +'<div class="section-head">'+t('bankTitle')+'</div>'
+      +'<div class="bank-box"><div class="bank-title">'+t('bankNote')+'</div>'
+      +'<div class="bank-row"><span class="bank-k">'+t('acctName')+'</span><span class="bank-v">Kimva Ltd</span></div>'
+      +'<div class="bank-row"><span class="bank-k">Sort Code</span><span class="bank-v">04-00-03</span></div>'
+      +'<div class="bank-row"><span class="bank-k">'+t('acctNo')+'</span><span class="bank-v">46163335</span></div>'
+      +'<div class="amt-due-row"><span class="amt-due-label">'+t('amtDue')+'</span><span class="amt-due-val">'+fmt(total)+'</span></div></div>'
+      +'<label class="f-label">'+t('acc5')+' <span style="color:var(--warn)">*</span></label><input class="f-input" type="text" id="f_acc5" placeholder="'+t('acc5ph')+'" maxlength="4"/><div id="err_acc5" class="f-err">'+t('errReq')+'</div>'
+      +'<div class="note">'+t('note1')+'</div></div>';
+    footerEl.style.display='block';
+    footerEl.innerHTML='<div class="footer-row"><button class="btn-secondary" onclick="goStep(\'contact\')">'+t('back')+'</button><button class="btn-primary" style="flex:1;" onclick="validatePayment()">'+t('confirmPayment')+'</button></div>';
+  }
+
+  if(step==='done'){
+    var st2=selStation?ALL_STATIONS.find(function(s){return s.id===selStation;}):null;
+    var days2=availableDays(isFr),dayObj2=selDay?days2.find(function(d){return d.key===selDay;}):null,dayLabel2=dayObj2?dayObj2.label:'';
+    scrollEl.innerHTML=buildSteps('done')
+      +'<div class="success"><div class="s-icon">✓</div><div class="s-title">'+t('doneTitle')+'</div><div class="s-sub">'+t('doneSub')+'</div>'
+      +'<div class="bank-box" style="width:100%;text-align:left;">'
+      +'<div class="bank-row"><span class="bank-k">'+t('total')+'</span><span class="bank-v" style="font-family:\'Cormorant Garamond\',serif;font-size:17px;color:var(--warn);">'+fmt(total)+'</span></div>'
+      +'<div class="bank-row"><span class="bank-k">'+t('delivery')+'</span><span class="bank-v">'+(dlvMode==='deliver'?t('deliver'):t('pickup'))+'</span></div>'
+      +(dlvMode==='pickup'&&dayLabel2?'<div class="bank-row"><span class="bank-k">'+t('collDay')+'</span><span class="bank-v">'+dayLabel2+'</span></div>':'')
+      +(dlvMode==='pickup'&&st2?'<div class="bank-row"><span class="bank-k">'+t('collPoint')+'</span><span class="bank-v">'+st2.name[lang]+'</span></div>':'')
+      +(dlvMode==='pickup'&&st2?'<div class="bank-row" style="border:none;"><span class="bank-k">'+t('collTime')+'</span><span class="bank-v">'+st2.time+'</span></div>':'')
+      +'</div>'
+      +'<div class="done-actions">'
+      +'<a href="https://wa.me/447700000000" style="display:flex;align-items:center;justify-content:center;gap:7px;padding:12px 8px;background:#25D366;color:white;border-radius:8px;font-size:13px;text-decoration:none;font-family:Jost,sans-serif;"><svg width="15" height="15" viewBox="0 0 24 24" fill="white"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>'+t('waContact')+'</a>'
+      +'<button class="btn-secondary" style="padding:12px 8px;" onclick="closeDrawer()">'+t('continueShopping')+'</button>'
+      +'</div></div>';
+    footerEl.innerHTML='';footerEl.style.display='none';
+  }
+}
+
+function validateCart(){
+  var ok=true;
+  if(dlvMode==='pickup'){
+    var dayErr=document.getElementById('day-err'),stErr=document.getElementById('station-err');
+    if(!selDay){if(dayErr) dayErr.style.display='block';ok=false;}else{if(dayErr) dayErr.style.display='none';}
+    if(selDay&&!selStation){if(stErr) stErr.style.display='block';ok=false;}else{if(stErr) stErr.style.display='none';}
+  }
+  if(ok) goStep('contact');
+}
+function validateContact(){
+  var ok=true;
+  function setErr(iid,eid,msg,invalid){var el=document.getElementById(iid),errEl=document.getElementById(eid);if(!el||!errEl)return;if(invalid){el.style.borderColor='var(--warn)';errEl.textContent=msg;errEl.style.display='block';ok=false;}else{el.style.borderColor='';errEl.style.display='none';}}
+  var name=document.getElementById('f_name'),phone=document.getElementById('f_phone'),email=document.getElementById('f_email'),addr=document.getElementById('f_addr');
+  setErr('f_name','err_name',t('errReq'),!name||!name.value.trim());
+  setErr('f_phone','err_phone',t('errPhone'),!phone||!/^[+\d][\d\s\-()+]{6,}$/.test(phone.value.trim()));
+  setErr('f_email','err_email',t('errEmail'),!email||!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.value.trim()));
+  if(addr) setErr('f_addr','err_addr',t('errReq'),!addr.value.trim());
+  if(ok) goStep('payment');
+}
+function validatePayment(){
+  var acc=document.getElementById('f_acc5'),errEl=document.getElementById('err_acc5');
+  if(!acc||!acc.value.trim()){if(acc)acc.style.borderColor='var(--warn)';if(errEl){errEl.textContent=t('errReq');errEl.style.display='block';}return;}
+  if(acc)acc.style.borderColor='';if(errEl)errEl.style.display='none';
+  goStep('done');
+}
+function goStep(s){step=s;renderDrawer();}
+function renderAll(){updateHeader();renderBanner();renderProducts();}
+renderAll();
+</script>
+</body>
+</html>
