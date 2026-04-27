@@ -227,7 +227,7 @@ body{font-family:'Jost',sans-serif;font-weight:300;background:var(--cream2);colo
 </div>
 
 <script>
-var APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwGIrv5f_Qcx8b_O8nSb2MUzDSi66wYBvWfho_14U52uv-MzBsrDMC_sn0wk_IF62r9ig/exec'; // ← 換成你的 Apps Script URL
+var APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxrsScH7N6KT0RvinAmpSTb7F-zHk4duaZwtM4TUUENU4MkOHkQLqafTc7T7MjbVS7HTw/exec'; // ← 換成你的 Apps Script URL
 
 var lang='zh',step='cart',dlvMode='pickup',selDay='',selStation='',drawerOpen=false;
 var discountCode='',discountPct=0;
@@ -475,7 +475,7 @@ function loadData() {
   showLoading(true);
 
   // If no URL set, use demo products
-  if (!APPS_SCRIPT_URL || APPS_SCRIPT_URL === 'https://script.google.com/macros/s/AKfycbwGIrv5f_Qcx8b_O8nSb2MUzDSi66wYBvWfho_14U52uv-MzBsrDMC_sn0wk_IF62r9ig/exec') {
+  if (!APPS_SCRIPT_URL || APPS_SCRIPT_URL === 'https://script.google.com/macros/s/AKfycbxrsScH7N6KT0RvinAmpSTb7F-zHk4duaZwtM4TUUENU4MkOHkQLqafTc7T7MjbVS7HTw/exec') {
     products = [
       {id:'1',cat:'frozen',name:{zh:'手工煎餃（豬肉高麗菜）',en:'Pan-fried Dumplings'},desc:{zh:'每包 10 粒，冷凍保存',en:'10 pcs per pack, frozen'},price:8.5,unit:{zh:'包',en:'pack'},stock:true,emoji:'🥟',imageUrl:''},
       {id:'2',cat:'frozen',name:{zh:'紅燒牛肉麵湯底',en:'Braised Beef Noodle Broth'},desc:{zh:'2人份，加麵即可上桌',en:'Serves 2, just add noodles'},price:12,unit:{zh:'份',en:'portion'},stock:true,emoji:'🍲',imageUrl:''},
@@ -534,7 +534,7 @@ function showLoading(show) {
 
 // ── Submit order to Google Sheet ─────────────────────────
 function submitOrder(formData) {
-  if (!APPS_SCRIPT_URL || APPS_SCRIPT_URL === 'https://script.google.com/macros/s/AKfycbwGIrv5f_Qcx8b_O8nSb2MUzDSi66wYBvWfho_14U52uv-MzBsrDMC_sn0wk_IF62r9ig/exec') {
+  if (!APPS_SCRIPT_URL || APPS_SCRIPT_URL === 'https://script.google.com/macros/s/AKfycbxrsScH7N6KT0RvinAmpSTb7F-zHk4duaZwtM4TUUENU4MkOHkQLqafTc7T7MjbVS7HTw/exec') {
     // Demo mode - just show done
     goStep('done');
     return;
